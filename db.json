@@ -7,22 +7,10 @@
       "reminder": true
     },
     {
-      "text": "sdasdasd",
-      "day": "sdaddas",
-      "reminder": "False",
-      "id": 2
-    },
-    {
       "text": "rawadras",
       "day": "ccccxxxzz",
       "reminder": false,
       "id": 3
-    },
-    {
-      "text": "",
-      "day": "",
-      "reminder": false,
-      "id": 4
     }
   ]
 }
