@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddTask from "./Components/AddTask";
 import Header from "./Components/Header";
 import Tasks from "./Components/Tasks";
@@ -6,47 +6,60 @@ import Tasks from "./Components/Tasks";
 
 function App() {
   const [showAddTask, setShowAddTask] = useState(false)
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: "Doctors Appointment",
-      day: "Feb 5th at 2:30pm",
-      reminder: true,
-    },
-    {
-      id: 2,
-      text: "Meeting at School",
-      day: "Feb 6th at 1:30pm",
-      reminder: true,
-    },
-    {
-      id: 3,
-      text: "Grocery shopping",
-      day: "Feb 7th at 5:30pm",
-      reminder: true,
-    }
-  ])
+  const [tasks, setTasks] = useState([])
 
   //delete task
   // const deleteTask = (id) => {
   //   console.log('delete', id)
   // }
+  useEffect(() => {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks()
+      setTasks(tasksFromServer)
+    }
+    getTasks()
+  },[])
 
-  const deleteTask = (id) => {
+  const deleteTask = async (id) => {
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method : 'DELETE'
+    })
     setTasks(tasks.filter((task) => task.id !== id))
   }
 
+  const fetchTasks = async () => {
+    const res = await fetch('http://localhost:5000/tasks')
+    const data = await res.json()
+
+    console.log(data)
+    return data
+  }
 //toggle reminder
 const toggleReminder = (id) => {
   setTasks(tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task ))
 }
 
 //Add Task
-const addTask= (task) => {
+const addTask= async (task) => { //ftob
+
+  const res = await fetch('http://localhost:5000/tasks',{
+    method: 'POST',
+    headers: {
+      'Content-type' : 'application/json' 
+    },
+    body : JSON.stringify(task)
+  })
+
+  const data = await res.json() //data sent is just new data added not the entire tasks array
+
+  setTasks([...tasks, data])
+
+
   // console.log(task)
-  const id = Math.floor(Math.random() * 10000) + 1
-  const newTask = {id, ...task}
-  setTasks([...tasks, newTask])
+  // const id = Math.floor(Math.random() * 10000) + 1
+  // const newTask = {id, ...task}
+  // setTasks([...tasks, newTask])
+
 }
 
   return (
